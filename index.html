@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- displays site properly based on user's device -->
+  <link rel="icon" type="image/png" sizes="32x32" href="./assets/images/favicon-32x32.png">
+  <link rel="stylesheet" href="https://fonts.google.com/specimen/Hanken+Grotesk">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style_desktop.css">
+
+  <title>Frontend Mentor | Results summary component</title>
+</head>
+
+<body>
+  <div class="outside-wrapper">
+    <div class="container">
+      <div class="summary-section">
+        <h2>Your Result</h2>
+        <div id="circle">
+          <div id="total-score"></div>
+          <span id="full-score">of 100</span>
+        </div>
+        <div id="grade"></div>
+        <p id="message">You scored higer than <span id="parcentage"></span>% of the people
+          who have taken these tests.
+        </p>
+      </div>
+      <div class="detail-section">
+        <h1>Summary</h1>
+        <ul id="scores"></ul>
+        <div id="continue-button"><span>Continue</span></div>
+      </div>
+    </div>
+
+  </div>
+  <script>
+    fetch('data.json')
+      .then(response => response.json())
+      .then(data => createResult(data))
+      .catch(error => console.error('Error fetching JSON:', error));
+
+    const createResult = (data) => {
+      let sumScore = 0;
+      const htmlCodeArray = data.map(item => {
+        sumScore += item.score;
+        return `
+      <li class="item">
+        <div class="item-title">
+          <img src="${item.icon}" alt="icon image">
+          <div class="title-name">${item.category}</div>
+        </div>
+        <div class="score"><span>${item.score}</span><span> / 100</span></div>
+      </li>
+    `;
+      });
+
+      document.querySelector('#scores').innerHTML = htmlCodeArray.join('');
+      const totalScore = (Math.floor(sumScore / data.length));
+      document.querySelector('#total-score').innerHTML = totalScore;
+      createGrade(totalScore);
+    }
+
+    const createGrade = (totalScore) => {
+      let grade;
+      let parcentage;
+
+      if (totalScore === 100) {
+        grade = "Perfect";
+        parcentage = 99;
+      } else if (totalScore > 85) {
+        grade = "Excellent";
+        parcentage = 75;
+      } else if (totalScore > 75) {
+        grade = "Great";
+        parcentage = 65;
+      } else if (totalScore > 60) {
+        grade = "Good";
+        parcentage = 60;
+      } else {
+        grade = "Average";
+        parcentage = 50;
+      }
+      document.querySelector('#grade').innerHTML = grade;
+      document.querySelector('#parcentage').innerHTML = parcentage;
+    }
+
+  </script>
+</body>
+
+</html>
